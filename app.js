@@ -2,14 +2,18 @@ const express = require('express')
 const app = express()
 const postsRouter = require('./routes/posts')
 const usersRouter = require("./routes/users")
-const cookieParser = require('cookie-parser')
+const apiPostsRouter = require('./routes/apiPosts')
 
+const cookieParser = require('cookie-parser')
 const session = require('express-session')
+const path = require('path');
 app.use(session({secret: 'superSecret', saveUninitialized: false, resave: false,}))
 
 const {Post, User, Subbreaddit} = require('./models')
 
 app.set('view engine', 'pug')
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.urlencoded({extended: true}))
 
@@ -45,9 +49,11 @@ app.use((req, res, next) => {
 //   }
 // })
 
+// npx sequelize db:drop && npx sequelize db:create && npx sequelize db:migrate && npx sequelize db:seed:all
 
 app.use('/posts', postsRouter)
 app.use("/users", usersRouter)
+app.use("/api/posts", apiPostsRouter)
 
 app.get('/', logReqData, async (req, res) => {
   // res.send('this is express! whoo!!')
@@ -56,6 +62,7 @@ app.get('/', logReqData, async (req, res) => {
   try {
     const posts = await Post.findAll()
     res.render('index', {title: 'breaddit', posts: posts})
+    // res.json({ posts })
   } catch (e) {
     console.log(e)
   }
