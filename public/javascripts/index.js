@@ -7,12 +7,18 @@ document.querySelector('.post-list').addEventListener('click', async (e) => {
     const data = await res.json();
     if (res.ok) {
       console.log(data.success);
-      e.target.parentElement.innerHTML = '[USER WAS BANNED FOR THIS PUN]'
+      const parent = e.target.parentElement;
 
-      e.target.parentElement.remove();
+      // Fixed the timeout thing
+      parent.innerHTML = '[USER WAS BANNED FOR THIS PUN]'
+      parent.style.color = 'red'
+      parent.style.marginTop = '20px';
+      setTimeout(() => {
+        parent.remove();
+      }, 3000)
+    };
 
     } else {
       console.log("Something went wrong");
     }
-  };
 })
