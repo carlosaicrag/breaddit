@@ -1,9 +1,10 @@
 const express = require("express")
 const router = express.Router()
 const csrf = require('csurf')
-const {User} = require("../models")
+const {User} = require("../db/models")
 const bcrypt = require("bcrypt")
 const {asyncHandler} = require("./util")
+const {getUserToken} = require("../auth")
 
 const loginReq = (req,res,next) => {
   
@@ -14,6 +15,9 @@ const loginReq = (req,res,next) => {
   }
   
 }
+router.get("/signup", async (req,res) => {
+  res.render("authorized_home")
+})
 
 router.get("/signup", async (req,res) => {
   res.render("signup")
@@ -21,12 +25,18 @@ router.get("/signup", async (req,res) => {
 
 router.post("/signup", asyncHandler( async (req,res) => {
   const {email, password, username} = req.body
-
   const hashedPW = await bcrypt.hash(password,10)
   const user = await User.create({email,hashedPW,username})
+  
+  const token = getUserToken(user);
 
-  req.session.user = {id: user.id, email: user.email, username:user.username}
-  res.redirect("/")
+    res.status(201).json({
+      user: { id: user.id },
+      token,
+    });
+
+  // req.session.user = {id: user.id, email: user.email, username:user.username}
+  // res.redirect("/")
 }))
 
 router.get("/login", async (req,res) => {

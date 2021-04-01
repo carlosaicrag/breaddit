@@ -2,12 +2,15 @@ const express = require('express')
 const app = express()
 const postsRouter = require('./routes/posts')
 const usersRouter = require("./routes/users")
+const homesRouter = require("./routes/homes")
 const cookieParser = require('cookie-parser')
+const dotenv = require('dotenv')
+dotenv.config()
 
 const session = require('express-session')
 app.use(session({secret: 'superSecret', saveUninitialized: false, resave: false,}))
 
-const {Post, User, Subbreaddit} = require('./models')
+const {Post, User, Subbreaddit} = require('./db/models')
 
 app.set('view engine', 'pug')
 
@@ -48,6 +51,7 @@ app.use((req, res, next) => {
 
 app.use('/posts', postsRouter)
 app.use("/users", usersRouter)
+app.use("/", homesRouter)
 
 app.get('/', logReqData, async (req, res) => {
   // res.send('this is express! whoo!!')
@@ -97,5 +101,4 @@ app.use((req, res, next) => {
 // app.all('*', (req, res) => {
 //   res.send('this is a catch all route')
 // })
-
-app.listen(8000, () => console.log('listening on port 8000, nice!'))
+app.listen(process.env.PORT, () => console.log(`listening on port ${process.env.PORT}, nice!`))
