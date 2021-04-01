@@ -18,7 +18,6 @@ app.use(express.urlencoded({extended: true}))
 
 app.use(cookieParser())
 
-// console.log(postsRouter.toString())
 const logReqData = (req, res, next) => {
   // log request path
   console.log('PATH ----', req.path)
@@ -27,27 +26,10 @@ const logReqData = (req, res, next) => {
   next()
 }
 
-// app.use(logReqData)
-
-app.use((req, res, next) => {
-  console.log('this will be hit second')
-  next()
-})
-
 app.use((req, res, next) => {
   req.isFunny = true;
   next()
 })
-
-// app.use((req, res, next) => {
-//   // check to see if user is logged in and authorized
-//   if (authorized) {
-//     next()
-//   } else {
-//     res.redirect('/login')
-//   }
-// })
-
 
 app.use('/posts', postsRouter)
 app.use("/users", usersRouter)
